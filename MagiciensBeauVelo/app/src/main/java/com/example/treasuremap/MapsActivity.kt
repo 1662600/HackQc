@@ -1,5 +1,7 @@
 package com.example.treasuremap
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Address
@@ -18,6 +20,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import android.location.Geocoder
+import android.util.Log
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationCallback
+
 
 
 
@@ -27,9 +34,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    private lateinit var lastLocation: Location
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private lateinit var map: GoogleMap
+
+    private var latitude :Double?= null
+
+    private var longitude:Double?= null
+
+    private val locationRequestCode = 1000
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +52,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
 
     }
 
@@ -52,11 +67,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
 
+        map = googleMap
+        getCurrentLocation()
         // Add a marker in Sydney and move the camera
-        val address = getLocationFromAddress(this, "1650, boulevard La Morille, Québec (QC) G2K 2L2");
+        val address = getLocationFromAddress(this, "2360, Nicolas Pinel")
+        val addressB = getLocationFromAddress(this, "966, Émélie-Chamard")
         map.addMarker(MarkerOptions().position(address!!).title("My address"))
+        map.addMarker(MarkerOptions().position(addressB!!).title("Vincent"))
+
+
+
+        if(latitude!=null && longitude!=null)
+        {
+
+
+        }
+
+
         map.moveCamera(CameraUpdateFactory.newLatLng(address))
         setUpMap()
 
@@ -71,7 +99,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    fun getLocationFromAddress(context: Context, strAddress: String): LatLng? {
+    private fun getLocationFromAddress(context: Context, strAddress: String): LatLng? {
         val coder = Geocoder(context)
         val address: List<Address>?
         var convertedAdress: LatLng? = null
@@ -92,6 +120,60 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         return convertedAdress
 
+    }
+
+    private fun getCurrentLocation() {
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request for permission
+            Log.v("permission","i need permission")
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                locationRequestCode
+            )
+
+        } else {
+            val mLocationRequest = LocationRequest.create()
+            mLocationRequest.interval = 60000
+            mLocationRequest.fastestInterval = 5000
+            mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            val mLocationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    if (locationResult == null) {
+                        return
+                    }
+                    for (location in locationResult.locations) {
+                        if (location != null) {
+
+                                latitude = location.latitude
+                                longitude = location.longitude
+                                Log.v("location", latitude.toString())
+                                Log.v("location", longitude.toString())
+
+                            var myPosition = LatLng(latitude!!, longitude!!)
+                            map.addMarker(MarkerOptions().position(myPosition).title("My position"))
+
+                        }
+
+                    }
+                }
+            }
+            LocationServices.getFusedLocationProviderClient(this)
+                .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+
+
+
+//            fusedLocationClient.lastLocation
+//                .addOnSuccessListener { location: Location? ->
+//                    latitude = location?.latitude
+//                    longitude = location?.longitude
+//
+//                    }
+
+            Log.v("permission","i got the power")
+                }
     }
 
 }
