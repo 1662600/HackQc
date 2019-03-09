@@ -2,7 +2,7 @@ package ca.csf.mobile2.demoaa.Categorization
 
 import ca.csf.mobile2.demoaa.R
 
-class Categorizer() {
+class InformationProvider() {
 
 
     private lateinit var categories: HashMap<String?, ca.csf.mobile2.demoaa.Categorization.Categories>

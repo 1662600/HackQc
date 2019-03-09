@@ -8,6 +8,7 @@ import org.androidannotations.annotations.EBean
 class Dictionary(
     private val context: Context
 ) {
+
     @Bean
     protected lateinit var comparator: LevenshteinDistance
     private val words: List<String>
