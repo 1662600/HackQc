@@ -1,74 +1,71 @@
 package ca.csf.mobile2.demoaa.Categorization
 
-import ca.csf.mobile2.demoaa.Dictionary
 import ca.csf.mobile2.demoaa.R
 
-class Categorizer(){
+class Categorizer() {
 
 
-    private class Categories()
-    {
-        lateinit var categories : HashMap<String?,GrandesCategories>
-        lateinit var imageHash : HashMap<GrandesCategories, String?>
+    private lateinit var categories: HashMap<String?, ca.csf.mobile2.demoaa.Categorization.Categories>
+    private lateinit var imageHash: HashMap<ca.csf.mobile2.demoaa.Categorization.Categories, Int>
 
-        init {
-            initializeCategoriesHashMap()
-
-        }
-        private fun initializeImageHashMap() {
-            imageHash = hashMapOf(
-                Pair(GrandesCategories.ACTIVITE_PHYSIQUE,R.drawable.activitephysique.toString()),
-                Pair(GrandesCategories.ARTISANAT,R.drawable.artisanat.toString()),
-                Pair(GrandesCategories.ARTISTE,R.drawable.artiste.toString()),
-                Pair(GrandesCategories.CONFERENCE,R.drawable.Conference.toString()),
-                Pair(GrandesCategories.EVENEMENT_SPECIAL,R.drawable.evenementspecial.toString()),
-                Pair(GrandesCategories.EXPOSITION,R.drawable.exposition.toString()),
-                Pair(GrandesCategories.LOISIR_JEUNESS,R.drawable.loisirjeunesse.toString()),
-                Pair(GrandesCategories.NATATION,R.drawable.natation.toString()),
-                Pair(GrandesCategories.PATRIMOINE,R.drawable.patrimoine.toString()),
-                Pair(GrandesCategories.PLEIN_AIR,R.drawable.pleinair.toString()),
-                Pair(GrandesCategories.SCIENTIFIQUE,R.drawable.Scientifique.toString()),
-                Pair(GrandesCategories.THEATRE,R.drawable.theatre.toString()),
-                Pair(GrandesCategories.MISC,R.drawable.misc.toString())
-            )
-        }
-        private fun initializeCategoriesHashMap() {
-            categories= hashMapOf(
-                Pair("1R-Activité de reconnaissance",GrandesCategories.MISC),
-                Pair("1R-Activités-Physiques",GrandesCategories.ACTIVITE_PHYSIQUE),
-                Pair("1R-Activités aquatiques",GrandesCategories.NATATION) ,
-                Pair("1R-Autre activité",GrandesCategories.MISC) ,
-                Pair("1R-Conférence",GrandesCategories.CONFERENCE),
-                Pair("1R-Formation", GrandesCategories.MISC),
-                Pair("Activités physiques",GrandesCategories.ACTIVITE_PHYSIQUE),
-                Pair("Activités aquatiques",GrandesCategories.NATATION),
-                Pair("Artisanat",GrandesCategories.ARTISANAT),
-                Pair("Arts de la communication",GrandesCategories.ARTISTE),
-                Pair("Arts de la scène",GrandesCategories.THEATRE),
-                Pair("Arts visuels",GrandesCategories.ARTISTE),
-                Pair("Camp spécialisé",GrandesCategories.MISC),
-                Pair("Clubs de natation",GrandesCategories.NATATION),
-                Pair("Artianat",GrandesCategories.ARTISANAT),
-                Pair("Exposition",GrandesCategories.EXPOSITION),
-                Pair("Formation",GrandesCategories.SCIENTIFIQUE),
-                Pair("Loisir éducatif",GrandesCategories.SCIENTIFIQUE),
-                Pair("Loisirs jeunesse",GrandesCategories.LOISIR_JEUNESS),
-                Pair("Loisirs récréatifs",GrandesCategories.MISC),
-                Pair("Mieux-être",GrandesCategories.MISC),
-                Pair("Métiers d'art",GrandesCategories.ARTISTE),
-                Pair("Patrimoine",GrandesCategories.PATRIMOINE),
-                Pair("Programme vacance été",GrandesCategories.PLEIN_AIR),
-                Pair("Relâche",GrandesCategories.MISC),
-                Pair("Service de garde",GrandesCategories.LOISIR_JEUNESS),
-                Pair("Sports de combat",GrandesCategories.ACTIVITE_PHYSIQUE),
-                Pair("Sports de glace",GrandesCategories.ACTIVITE_PHYSIQUE),
-                Pair("Sports et de plein air",GrandesCategories.PLEIN_AIR),
-                Pair("Événement spécial",GrandesCategories.EVENEMENT_SPECIAL),
-                Pair(null,GrandesCategories.MISC)
-            )
-            }
-
+    init {
+        initializeCategoriesHashMap()
+        initializeImageHashMap()
     }
 
+
+    private fun initializeImageHashMap() {
+        imageHash = hashMapOf(
+            Pair(Categories.ACTIVITE_PHYSIQUE, R.drawable.activitephysique),
+            Pair(Categories.ARTISANAT, R.drawable.artisanat),
+            Pair(Categories.ARTISTE, R.drawable.artiste),
+            Pair(Categories.CONFERENCE, R.drawable.Conference),
+            Pair(Categories.EVENEMENT_SPECIAL, R.drawable.evenementspecial),
+            Pair(Categories.EXPOSITION, R.drawable.exposition),
+            Pair(Categories.LOISIR_JEUNESS, R.drawable.loisirjeunesse),
+            Pair(Categories.NATATION, R.drawable.natation),
+            Pair(Categories.PATRIMOINE, R.drawable.patrimoine),
+            Pair(Categories.PLEIN_AIR, R.drawable.pleinair),
+            Pair(Categories.SCIENTIFIQUE, R.drawable.Scientifique),
+            Pair(Categories.THEATRE, R.drawable.theatre),
+            Pair(Categories.MISC, R.drawable.misc)
+        )
+    }
+
+    private fun initializeCategoriesHashMap() {
+        categories = hashMapOf(
+            Pair("1R-Activité de reconnaissance", Categories.MISC),
+            Pair("1R-Activités-Physiques", Categories.ACTIVITE_PHYSIQUE),
+            Pair("1R-Activités aquatiques", Categories.NATATION),
+            Pair("1R-Autre activité", Categories.MISC),
+            Pair("1R-Conférence", Categories.CONFERENCE),
+            Pair("1R-Formation", Categories.MISC),
+            Pair("Activités physiques", Categories.ACTIVITE_PHYSIQUE),
+            Pair("Activités aquatiques", Categories.NATATION),
+            Pair("Artisanat", Categories.ARTISANAT),
+            Pair("Arts de la communication", Categories.ARTISTE),
+            Pair("Arts de la scène", Categories.THEATRE),
+            Pair("Arts visuels", Categories.ARTISTE),
+            Pair("Camp spécialisé", Categories.MISC),
+            Pair("Clubs de natation", Categories.NATATION),
+            Pair("Artianat", Categories.ARTISANAT),
+            Pair("Exposition", Categories.EXPOSITION),
+            Pair("Formation", Categories.SCIENTIFIQUE),
+            Pair("Loisir éducatif", Categories.SCIENTIFIQUE),
+            Pair("Loisirs jeunesse", Categories.LOISIR_JEUNESS),
+            Pair("Loisirs récréatifs", Categories.MISC),
+            Pair("Mieux-être", Categories.MISC),
+            Pair("Métiers d'art", Categories.ARTISTE),
+            Pair("Patrimoine", Categories.PATRIMOINE),
+            Pair("Programme vacance été", Categories.PLEIN_AIR),
+            Pair("Relâche", Categories.MISC),
+            Pair("Service de garde", Categories.LOISIR_JEUNESS),
+            Pair("Sports de combat", Categories.ACTIVITE_PHYSIQUE),
+            Pair("Sports de glace", Categories.ACTIVITE_PHYSIQUE),
+            Pair("Sports et de plein air", Categories.PLEIN_AIR),
+            Pair("Événement spécial", Categories.EVENEMENT_SPECIAL),
+            Pair(null, Categories.MISC)
+        )
+    }
 
 }

@@ -1,6 +1,6 @@
 package ca.csf.mobile2.demoaa.Categorization
 
-enum class GrandesCategories {
+enum class Categories {
     ACTIVITE_PHYSIQUE,
     ARTISANAT,
     ARTISTE,
