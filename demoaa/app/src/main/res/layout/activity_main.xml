@@ -7,18 +7,6 @@
     tools:context="ca.csf.mobile2.demoaa.MainActivity">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/ic_launcher_background"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ic_launcher_background"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="196dp" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.551"/>
-
     <Button
         android:id="@+id/searchButton"
         style="@style/Widget.AppCompat.Button.Colored"
@@ -31,13 +19,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <TextView
-            android:text="Select"
-            android:layout_width="393dp"
-            android:layout_height="16dp"
-            android:id="@+id/textView2" android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <GridView
+            android:layout_width="395dp"
+            android:layout_height="589dp"
+            android:numColumns="2"
+            android:horizontalSpacing="10dp"
+            android:verticalSpacing="10dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/searchButton" app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="1.0" android:id="@+id/grid"
+            />
 
 </android.support.constraint.ConstraintLayout>
