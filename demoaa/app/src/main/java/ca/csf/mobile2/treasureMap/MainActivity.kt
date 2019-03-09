@@ -1,11 +1,10 @@
-package ca.csf.mobile2.demoaa
+package ca.csf.mobile2.treasureMap
 
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.GridView
-import ca.csf.mobile2.demoaa.Categorization.InformationProvider
+import ca.csf.mobile2.treasureMap.categorization.InformationProvider
 import org.androidannotations.annotations.*
-import java.util.Dictionary
 
 @EActivity(R.layout.activity_main)
 class MainActivity : AppCompatActivity() {

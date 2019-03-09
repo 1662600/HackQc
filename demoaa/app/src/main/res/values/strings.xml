@@ -5,4 +5,5 @@
     <string name="hint_search_word">Rechercher un mot…</string>
     <string name="categorie">Sélectionnez une catégorie d\'activité</string>
     <string name="secteur">Sélectionnez un secteur</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

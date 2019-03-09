@@ -1,6 +1,6 @@
-package ca.csf.mobile2.demoaa.Categorization
+package ca.csf.mobile2.treasureMap.categorization
 
-import ca.csf.mobile2.demoaa.R
+import ca.csf.mobile2.treasureMap.R
 
 class InformationProvider() {
 

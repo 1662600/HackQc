@@ -1,11 +1,11 @@
-package ca.csf.mobile2.demoaa
+package ca.csf.mobile2.treasureMap
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import ca.csf.mobile2.demoaa.Categorization.Categories
+import ca.csf.mobile2.treasureMap.categorization.Categories
 import kotlinx.android.synthetic.main.categorie_activite_layout.view.*
 
 class CategorieAdapter : BaseAdapter {

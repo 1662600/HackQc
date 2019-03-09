@@ -1,4 +1,4 @@
-package ca.csf.mobile2.demoaa.Categorization
+package ca.csf.mobile2.treasureMap.categorization
 
 enum class Categories {
     ACTIVITE_PHYSIQUE,
