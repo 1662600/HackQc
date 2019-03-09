@@ -39,7 +39,7 @@ class CategorieAdapter : BaseAdapter {
         return categories.size
     }
 
-    override fun getItem(position: Int): Any
+    override fun getItem(position: Int): Categories
     {
         return categories.keys.elementAt(position)
     }
