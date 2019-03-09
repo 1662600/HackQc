@@ -21,11 +21,16 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import android.location.Geocoder
 import android.util.Log
+import com.example.treasuremap.loisir.LOISIRS_LIBRES
+import com.example.treasuremap.loisir.LOISIR_LIBRE
+import com.example.treasuremap.loisir.Loisir
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
-
-
+import com.google.gson.Gson
+import java.io.File
+import java.io.InputStream
+import java.nio.charset.Charset
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -41,6 +46,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var latitude :Double?= null
 
     private var longitude:Double?= null
+
 
     private val locationRequestCode = 1000
 
@@ -75,18 +81,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val addressB = getLocationFromAddress(this, "966, Émélie-Chamard")
         map.addMarker(MarkerOptions().position(address!!).title("My address"))
         map.addMarker(MarkerOptions().position(addressB!!).title("Vincent"))
-
-
-
-        if(latitude!=null && longitude!=null)
-        {
-
-
-        }
-
-
         map.moveCamera(CameraUpdateFactory.newLatLng(address))
         setUpMap()
+        DeserialiseJSONFile()
+
+
 
     }
 
@@ -174,6 +173,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             Log.v("permission","i got the power")
                 }
+    }
+
+    fun ReadJSONFile(): String{
+        var ins: InputStream = resources.openRawResource(R.raw.loisir)
+        var content= ins.readBytes().toString(Charset.defaultCharset())
+        Log.v("json",content)
+        return content
+    }
+    fun DeserialiseJSONFile(){
+        var gson = Gson()
+        var content = ReadJSONFile()
+        var jsonString = gson.fromJson(content, Loisir::class.java)
+
     }
 
 }
