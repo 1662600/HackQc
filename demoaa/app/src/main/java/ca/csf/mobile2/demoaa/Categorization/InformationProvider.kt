@@ -5,8 +5,8 @@ import ca.csf.mobile2.demoaa.R
 class InformationProvider() {
 
 
-    private lateinit var categories: HashMap<String?, ca.csf.mobile2.demoaa.Categorization.Categories>
-    private lateinit var imageHash: HashMap<ca.csf.mobile2.demoaa.Categorization.Categories, Int>
+    private lateinit var categories: HashMap<String?, Categories>
+    private lateinit var imageHash: HashMap<Categories, Int>
 
     init {
         initializeCategoriesHashMap()
@@ -19,14 +19,14 @@ class InformationProvider() {
             Pair(Categories.ACTIVITE_PHYSIQUE, R.drawable.activitephysique),
             Pair(Categories.ARTISANAT, R.drawable.artisanat),
             Pair(Categories.ARTISTE, R.drawable.artiste),
-            Pair(Categories.CONFERENCE, R.drawable.Conference),
+            Pair(Categories.CONFERENCE, R.drawable.conference),
             Pair(Categories.EVENEMENT_SPECIAL, R.drawable.evenementspecial),
             Pair(Categories.EXPOSITION, R.drawable.exposition),
             Pair(Categories.LOISIR_JEUNESS, R.drawable.loisirjeunesse),
             Pair(Categories.NATATION, R.drawable.natation),
             Pair(Categories.PATRIMOINE, R.drawable.patrimoine),
             Pair(Categories.PLEIN_AIR, R.drawable.pleinair),
-            Pair(Categories.SCIENTIFIQUE, R.drawable.Scientifique),
+            Pair(Categories.SCIENTIFIQUE, R.drawable.scientifique),
             Pair(Categories.THEATRE, R.drawable.theatre),
             Pair(Categories.MISC, R.drawable.misc)
         )
@@ -66,6 +66,11 @@ class InformationProvider() {
             Pair("Événement spécial", Categories.EVENEMENT_SPECIAL),
             Pair(null, Categories.MISC)
         )
+    }
+
+    fun GetCategoriesMap() : HashMap<Categories, Int>
+    {
+        return imageHash
     }
 
 }
