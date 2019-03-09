@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import android.location.Geocoder
 import android.util.Log
 import ca.csf.mobile2.treasureMap.R
-import com.example.treasuremap.loisir.Loisir
+import ca.csf.mobile2.treasureMap.loisir.Loisir
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback

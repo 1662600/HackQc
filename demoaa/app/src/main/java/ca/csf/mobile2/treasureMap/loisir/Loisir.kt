@@ -1,4 +1,4 @@
-package com.example.treasuremap.loisir
+package ca.csf.mobile2.treasureMap.loisir
 
 data class Loisir (
 
