@@ -5,20 +5,15 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.text.Layout
 import android.util.Log
 import android.view.View
-
 import android.widget.GridView
 import ca.csf.mobile2.treasureMap.categorization.InformationProvider
 import org.androidannotations.annotations.*
-
 import android.widget.*
-import ca.csf.mobile2.treasureMap.ActivityAdapter
-
 import ca.csf.mobile2.treasureMap.loisir.Loisir
 import com.google.gson.Gson
 import org.androidannotations.annotations.*
@@ -27,15 +22,18 @@ import java.nio.charset.Charset
 import ca.csf.mobile2.treasureMap.loisir.LOISIR_LIBRE
 import kotlinx.android.synthetic.main.categorie_activite_layout.view.*
 import ca.csf.mobile2.treasureMap.categorization.Categories
-import ca.csf.mobile2.treasureMap.map.MapsActivity
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.selection_activite.view.*
+import android.view.animation.LinearInterpolator
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
+
+
 
 
 
@@ -57,7 +55,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val locationRequestCode = 1000
 
+    val rotate = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+
     var adresseSelected = ""
+    var descriptionSelected = ""
 
     var activitiesWithSelectedCategories : List<LOISIR_LIBRE> = listOf()
 
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     protected lateinit var list : ListView
 
     @ViewById(R.id.mapFrame)
-    protected lateinit var gMap : FrameLayout
+    protected lateinit var gMap : ConstraintLayout
 
     @ViewById(R.id.backButton)
     protected lateinit var backButton : Button
@@ -85,15 +86,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     @ViewById(R.id.indication)
     protected lateinit var indication : TextView
 
+    @ViewById(R.id.mapAdresse)
+    protected lateinit var mapAdresse : TextView
+
+    @ViewById(R.id.mapDescription)
+    protected lateinit var mapDescription : TextView
+
+    @ViewById(R.id.loadingImage)
+    protected lateinit var loadingImage : CircleImageView
+
     protected lateinit var loisirObject : Loisir
 
     @InstanceState
     protected lateinit var selectedCategorieText : String
 
+    var context = this
 
     @AfterViews
     protected fun afterViews()
     {
+        rotate.duration = 4000
+        rotate.interpolator = LinearInterpolator()
+        rotate.repeatCount = RotateAnimation.INFINITE
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.gmap) as SupportMapFragment
@@ -108,11 +122,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         {
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
             {
-                // Get the GridView selected/clicked item text
-                if(view!=null)
-                {
-                    selectedCategorieText = view.categorieText.text.toString()
-                }
+                selectedCategorieText = view.categorieText.text.toString()
 
                 hideCategories()
                 showActivites()
@@ -121,15 +131,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         list.onItemClickListener = object : AdapterView.OnItemClickListener
         {
-            override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
+            @Background
+            protected fun setMarkers()
             {
-                // Get the GridView selected/clicked item text
-                if(view!=null)
+                map.clear()
+                for (i in 0..activitiesWithSelectedCategories.size -1)
                 {
-                    adresseSelected = view.adresse.text.toString()
+                    if(activitiesWithSelectedCategories.elementAt(i).ADRESSE != adresseSelected)
+                        map.addMarker(MarkerOptions().position(getLocationFromAddress(context, activitiesWithSelectedCategories.elementAt(i).ADRESSE!!)!!)!!)
                 }
 
+                map.addMarker(MarkerOptions().position(getLocationFromAddress(context, adresseSelected)!!).icon(BitmapDescriptorFactory
+                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))!!)
+
+
+                //var position : CameraUpdate = CameraUpdateFactory.newLatLng(getLocationFromAddress(context, adresseSelected)!!)
+                //var zoom : CameraUpdate = CameraUpdateFactory.zoomTo(15f)
+
+                //map.moveCamera(position)
+                //map.animateCamera(zoom)
+            }
+
+            override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
+            {
                 hideActivites()
+                //showLoading()
+
+                adresseSelected = view.adresse.text.toString()
+                descriptionSelected = view.description.text.toString()
+
+                setMarkers()
                 showMap()
             }
         }
@@ -138,11 +169,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @UiThread
+    protected fun hideLoading()
+    {
+        loadingImage.visibility = View.INVISIBLE
+        loadingImage.clearAnimation()
+    }
+
+    @UiThread
+    protected fun showLoading()
+    {
+
+        loadingImage.visibility = View.VISIBLE
+        loadingImage.startAnimation(rotate)
+        indication.text = ""
+
+    }
+
+    @UiThread
     protected fun showMap()
     {
         indication.text = getString(R.string.trouvez)
         backButton.visibility = View.VISIBLE
         gMap.visibility = View.VISIBLE
+
+        mapAdresse.text = adresseSelected
+        mapDescription.text = descriptionSelected
     }
 
     @UiThread
@@ -206,13 +257,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
         getCurrentLocation()
 
-        val address = getLocationFromAddress(this, "2360, Nicolas Pinel")
-        val addressB = getLocationFromAddress(this, "966, Émélie-Chamard")
-        map.addMarker(MarkerOptions().position(address!!).title("My address"))
-        map.addMarker(MarkerOptions().position(addressB!!).title("Vincent"))
-
-
-        map.moveCamera(CameraUpdateFactory.newLatLng(address))
         setUpMap()
     }
 
