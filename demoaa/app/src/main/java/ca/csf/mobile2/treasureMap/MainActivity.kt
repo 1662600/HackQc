@@ -117,7 +117,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         loisirObject = DeserialiseLoisirJSONFile()
 
-        sitesObject = DeserialiseSiteJSONFile()
 
         grid.onItemClickListener = object : AdapterView.OnItemClickListener
         {
