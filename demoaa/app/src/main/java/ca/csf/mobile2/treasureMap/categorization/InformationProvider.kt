@@ -73,4 +73,16 @@ class InformationProvider() {
         return imageHash
     }
 
+    fun GetSubCategoriesOf(categorie: Categories) : HashMap<String?, Categories>
+    {
+        var subCategories: HashMap<String?, Categories>  = HashMap()
+
+        for (i in 0..categories.size -1)
+        {
+            if(categories.values.elementAt(i) == categorie)
+                subCategories.put(categories.keys.elementAt(i), categories.values.elementAt(i))
+        }
+
+        return subCategories
+    }
 }
