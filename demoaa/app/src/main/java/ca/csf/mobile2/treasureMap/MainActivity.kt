@@ -16,7 +16,6 @@ import org.androidannotations.annotations.*
 import android.widget.*
 import ca.csf.mobile2.treasureMap.loisir.Loisir
 import com.google.gson.Gson
-import org.androidannotations.annotations.*
 import java.io.InputStream
 import java.nio.charset.Charset
 import ca.csf.mobile2.treasureMap.loisir.LOISIR_LIBRE
@@ -32,9 +31,7 @@ import kotlinx.android.synthetic.main.selection_activite.view.*
 import android.view.animation.LinearInterpolator
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
-
-
-
+import ca.csf.mobile2.treasureMap.Sites.Sites
 
 
 @EActivity(R.layout.activity_main)
@@ -97,6 +94,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     protected lateinit var loisirObject : Loisir
 
+    protected lateinit var sitesObject : Sites
+
     @InstanceState
     protected lateinit var selectedCategorieText : String
 
@@ -116,7 +115,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         grid.adapter = adapter
 
-        loisirObject = DeserialiseJSONFile()
+        loisirObject = DeserialiseLoisirJSONFile()
+
+        sitesObject = DeserialiseSiteJSONFile()
 
         grid.onItemClickListener = object : AdapterView.OnItemClickListener
         {
@@ -138,18 +139,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 for (i in 0..activitiesWithSelectedCategories.size -1)
                 {
                     if(activitiesWithSelectedCategories.elementAt(i).ADRESSE != adresseSelected)
-                        map.addMarker(MarkerOptions().position(getLocationFromAddress(context, activitiesWithSelectedCategories.elementAt(i).ADRESSE!!)!!)!!)
+                        map.addMarker(MarkerOptions().title(activitiesWithSelectedCategories.elementAt(i).DESCRIPTION).position(getLocationFromAddress(context, activitiesWithSelectedCategories.elementAt(i).ADRESSE!!)!!)!!)
                 }
 
-                map.addMarker(MarkerOptions().position(getLocationFromAddress(context, adresseSelected)!!).icon(BitmapDescriptorFactory
+                var locationSelected : LatLng = getLocationFromAddress(context, adresseSelected)!!
+
+                map.addMarker(MarkerOptions().position(locationSelected).title(descriptionSelected).icon(BitmapDescriptorFactory
                     .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))!!)
 
 
-                //var position : CameraUpdate = CameraUpdateFactory.newLatLng(getLocationFromAddress(context, adresseSelected)!!)
-                //var zoom : CameraUpdate = CameraUpdateFactory.zoomTo(15f)
 
-                //map.moveCamera(position)
-                //map.animateCamera(zoom)
+                var location: CameraUpdate  = CameraUpdateFactory.newLatLngZoom(locationSelected, 13f)
+                map.animateCamera(location)
+
             }
 
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
@@ -169,13 +171,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     @UiThread
-    protected fun hideLoading()
-    {
-        loadingImage.visibility = View.INVISIBLE
-        loadingImage.clearAnimation()
-    }
-
-    @UiThread
     protected fun showLoading()
     {
 
@@ -183,6 +178,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         loadingImage.startAnimation(rotate)
         indication.text = ""
 
+    }
+
+    @UiThread
+    protected fun hideLoading()
+    {
+        loadingImage.visibility = View.INVISIBLE
+        loadingImage.clearAnimation()
     }
 
     @UiThread
@@ -336,19 +338,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    protected fun ReadJSONFile(): String
+    protected fun ReadJSONFile(id: Int): String
     {
-        var ins: InputStream = resources.openRawResource(R.raw.loisir)
+        var ins: InputStream = resources.openRawResource(id)
         var content= ins.readBytes().toString(Charset.defaultCharset())
         return content
     }
 
-    protected fun DeserialiseJSONFile() : Loisir
+    protected fun DeserialiseLoisirJSONFile() : Loisir
     {
         var gson = Gson()
-        var content = ReadJSONFile()
+        var content = ReadJSONFile(R.raw.loisir)
 
         return gson.fromJson(content, Loisir::class.java)
+    }
+
+    protected fun DeserialiseSiteJSONFile() : Sites
+    {
+        var gson = Gson()
+        var content = ReadJSONFile(R.raw.sites_loisir)
+
+        return gson.fromJson(content, Sites::class.java)
     }
 
     private fun GetAllActivitiesWithSelectedCategorie() : List<LOISIR_LIBRE>

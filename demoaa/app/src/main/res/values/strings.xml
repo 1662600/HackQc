@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Treasure Map</string>
 
-    <string name="back">Back</string>
+    <string name="back">retour</string>
     <string name="categorie">Sélectionnez une catégorie d\'activité</string>
 
     <string name="secteur">Sélectionnez un secteur</string>
