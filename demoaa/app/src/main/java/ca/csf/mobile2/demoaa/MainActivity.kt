@@ -1,7 +1,5 @@
 package ca.csf.mobile2.demoaa
 
-import android.opengl.Visibility
-import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -13,9 +11,7 @@ import com.google.gson.Gson
 import org.androidannotations.annotations.*
 import java.io.InputStream
 import java.nio.charset.Charset
-import java.util.Dictionary
-import android.widget.AdapterView.OnItemClickListener
-import ca.csf.mobile2.demoaa.Categorization.Categories
+import android.widget.Button
 import kotlinx.android.synthetic.main.categorie_activite_layout.view.*
 
 
@@ -31,6 +27,9 @@ class MainActivity : AppCompatActivity() {
 
     @ViewById(R.id.grid)
     protected lateinit var grid : GridView
+
+    @ViewById(R.id.backButton)
+    protected lateinit var backButton : Button
 
     protected lateinit var loisirObject : Loisir
 
@@ -49,7 +48,10 @@ class MainActivity : AppCompatActivity() {
                 // Get the GridView selected/clicked item text
                 selectedCategorieText = parent.getChildAt(position).categorieText.text.toString()
 
+                Log.v("HAAAA", selectedCategorieText)
+
                 hideCategories()
+                showActivites()
             }
         }
     }
@@ -60,14 +62,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     @UiThread
-    protected fun show() {
-
+    protected fun showActivites() {
+        backButton.visibility = View.VISIBLE
     }
+
+    @UiThread
+    protected fun hideActivites() {
+        backButton.visibility = View.INVISIBLE
+    }
+
+    @UiThread
+    protected fun showCategories()
+    {
+        grid.visibility = GridView.VISIBLE
+    }
+
 
     @UiThread
     protected fun hideCategories()
     {
         grid.visibility = GridView.INVISIBLE
+    }
+
+    @Click(R.id.backButton)
+    protected fun onReturnClicked()
+    {
+        hideActivites()
+        showCategories()
     }
 
     protected fun ReadJSONFile(): String
