@@ -2,7 +2,6 @@
     <string name="app_name">Treasure Map</string>
 
     <string name="back">Back</string>
-    <string name="hint_search_word">Rechercher un mot…</string>
     <string name="categorie">Sélectionnez une catégorie d\'activité</string>
-    <string name="secteur">Sélectionnez un secteur</string>
+    <string name="activite">Sélectionnez une activité</string>
 </resources>
