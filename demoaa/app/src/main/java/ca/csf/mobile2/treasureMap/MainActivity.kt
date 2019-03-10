@@ -1,6 +1,14 @@
 package ca.csf.mobile2.treasureMap
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.text.Layout
 import android.util.Log
 import android.view.View
 
@@ -19,12 +27,35 @@ import java.nio.charset.Charset
 import ca.csf.mobile2.treasureMap.loisir.LOISIR_LIBRE
 import kotlinx.android.synthetic.main.categorie_activite_layout.view.*
 import ca.csf.mobile2.treasureMap.categorization.Categories
+import ca.csf.mobile2.treasureMap.map.MapsActivity
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.selection_activite.view.*
 
 
 
 @EActivity(R.layout.activity_main)
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private lateinit var map: GoogleMap
+
+    private var latitude :Double?= null
+
+    private var longitude:Double?= null
+
+
+    private val locationRequestCode = 1000
 
     var adresseSelected = ""
 
@@ -45,6 +76,9 @@ class MainActivity : AppCompatActivity() {
     @ViewById(R.id.list)
     protected lateinit var list : ListView
 
+    @ViewById(R.id.mapFrame)
+    protected lateinit var gMap : FrameLayout
+
     @ViewById(R.id.backButton)
     protected lateinit var backButton : Button
 
@@ -60,6 +94,11 @@ class MainActivity : AppCompatActivity() {
     @AfterViews
     protected fun afterViews()
     {
+
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.gmap) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         grid.adapter = adapter
 
@@ -94,6 +133,8 @@ class MainActivity : AppCompatActivity() {
                 showMap()
             }
         }
+
+        hideMap()
     }
 
     @UiThread
@@ -101,12 +142,13 @@ class MainActivity : AppCompatActivity() {
     {
         indication.text = getString(R.string.trouvez)
         backButton.visibility = View.VISIBLE
+        gMap.visibility = View.VISIBLE
     }
 
     @UiThread
     protected fun hideMap()
     {
-
+        gMap.visibility = View.INVISIBLE
     }
 
     @UiThread
@@ -157,6 +199,97 @@ class MainActivity : AppCompatActivity() {
             hideMap()
         }
 
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+
+        map = googleMap
+        getCurrentLocation()
+
+        val address = getLocationFromAddress(this, "2360, Nicolas Pinel")
+        val addressB = getLocationFromAddress(this, "966, Émélie-Chamard")
+        map.addMarker(MarkerOptions().position(address!!).title("My address"))
+        map.addMarker(MarkerOptions().position(addressB!!).title("Vincent"))
+
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(address))
+        setUpMap()
+    }
+
+    private fun setUpMap() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), MainActivity.LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+    }
+
+    private fun getLocationFromAddress(context: Context, strAddress: String): LatLng? {
+        val coder = Geocoder(context)
+        val address: List<Address>?
+        var convertedAdress: LatLng? = null
+
+        try {
+            address = coder.getFromLocationName(strAddress, 5)
+            if (address == null) {
+                return null
+            }
+            val location = address[0]
+            location.getLatitude()
+            location.getLongitude()
+
+            convertedAdress = LatLng(location.getLatitude(), location.getLongitude())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return convertedAdress
+
+    }
+
+    private fun getCurrentLocation() {
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request for permission
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                locationRequestCode
+            )
+
+        } else {
+            val mLocationRequest = LocationRequest.create()
+            mLocationRequest.interval = 60000
+            mLocationRequest.fastestInterval = 5000
+            mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+            val mLocationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    if (locationResult == null) {
+                        return
+                    }
+                    for (location in locationResult.locations) {
+                        if (location != null) {
+
+                            latitude = location.latitude
+                            longitude = location.longitude
+                            Log.v("location", latitude.toString())
+                            Log.v("location", longitude.toString())
+
+                            var myPosition = LatLng(latitude!!, longitude!!)
+                            map.addMarker(MarkerOptions().position(myPosition).title("My position"))
+
+                        }
+                    }
+                }
+            }
+            LocationServices.getFusedLocationProviderClient(this)
+                .requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+
+        }
     }
 
     protected fun ReadJSONFile(): String
