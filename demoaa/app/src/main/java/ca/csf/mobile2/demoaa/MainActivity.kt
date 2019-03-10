@@ -3,23 +3,23 @@ package ca.csf.mobile2.demoaa
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.GridView
+import android.widget.*
 import ca.csf.mobile2.demoaa.Categorization.InformationProvider
 import com.example.demoaa.loisir.Loisir
 import com.google.gson.Gson
 import org.androidannotations.annotations.*
 import java.io.InputStream
 import java.nio.charset.Charset
-import android.widget.Button
-import android.widget.TextView
 import com.example.demoaa.loisir.LOISIR_LIBRE
 import kotlinx.android.synthetic.main.categorie_activite_layout.view.*
 import ca.csf.mobile2.demoaa.Categorization.Categories
+import kotlinx.android.synthetic.main.selection_activite.view.*
 
 
 @EActivity(R.layout.activity_main)
 class MainActivity : AppCompatActivity() {
+
+    var adresseSelected = ""
 
     var activitiesWithSelectedCategories : List<LOISIR_LIBRE> = listOf()
 
@@ -27,11 +27,16 @@ class MainActivity : AppCompatActivity() {
 
     var adapter: CategorieAdapter = CategorieAdapter(this, informationProvider.GetCategoriesMap())
 
+    lateinit var activityAdapter: ActivityAdapter
+
     @ViewById(R.id.rootView)
     protected lateinit var rootView: View
 
     @ViewById(R.id.grid)
     protected lateinit var grid : GridView
+
+    @ViewById(R.id.list)
+    protected lateinit var list : ListView
 
     @ViewById(R.id.backButton)
     protected lateinit var backButton : Button
@@ -50,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     {
 
         grid.adapter = adapter
+
         loisirObject = DeserialiseJSONFile()
 
         grid.onItemClickListener = object : AdapterView.OnItemClickListener
@@ -61,12 +67,39 @@ class MainActivity : AppCompatActivity() {
                 {
                     selectedCategorieText = view.categorieText.text.toString()
                 }
-                Log.v("HAAAA", selectedCategorieText)
 
                 hideCategories()
                 showActivites()
             }
         }
+
+        list.onItemClickListener = object : AdapterView.OnItemClickListener
+        {
+            override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
+            {
+                // Get the GridView selected/clicked item text
+                if(view!=null)
+                {
+                    adresseSelected = view.adresse.text.toString()
+                }
+
+                hideActivites()
+                showMap()
+            }
+        }
+    }
+
+    @UiThread
+    protected fun showMap()
+    {
+        indication.text = getString(R.string.trouvez)
+        backButton.visibility = View.VISIBLE
+    }
+
+    @UiThread
+    protected fun hideMap()
+    {
+
     }
 
     @UiThread
@@ -75,12 +108,18 @@ class MainActivity : AppCompatActivity() {
         backButton.visibility = View.VISIBLE
         activitiesWithSelectedCategories = GetAllActivitiesWithSelectedCategorie()
         indication.text = getString(R.string.activite)
+
+        activityAdapter = ActivityAdapter(this, activitiesWithSelectedCategories)
+        list.adapter = activityAdapter
+
+        list.visibility = View.VISIBLE
     }
 
     @UiThread
     protected fun hideActivites()
     {
         backButton.visibility = View.INVISIBLE
+        list.visibility = View.INVISIBLE
     }
 
     @UiThread
@@ -94,14 +133,23 @@ class MainActivity : AppCompatActivity() {
     @UiThread
     protected fun hideCategories()
     {
-        grid.visibility = GridView.INVISIBLE
+        grid.visibility = View.INVISIBLE
     }
 
     @Click(R.id.backButton)
     protected fun onReturnClicked()
     {
-        hideActivites()
-        showCategories()
+        if(list.visibility == View.VISIBLE)
+        {
+            hideActivites()
+            showCategories()
+        }
+        else
+        {
+            showActivites()
+            hideMap()
+        }
+
     }
 
     protected fun ReadJSONFile(): String
