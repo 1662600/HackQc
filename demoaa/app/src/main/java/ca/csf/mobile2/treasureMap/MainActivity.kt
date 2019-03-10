@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.os.Handler
 import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
@@ -155,14 +156,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long)
             {
+                showLoading()
                 hideActivites()
-                //showLoading()
+
+                Handler().postDelayed({
+                    setMarkers()
+                    showMap()
+                    hideLoading()
+                }, 1000)
+
 
                 adresseSelected = view.adresse.text.toString()
                 descriptionSelected = view.description.text.toString()
 
-                setMarkers()
-                showMap()
+
+
+
             }
         }
 
